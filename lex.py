@@ -1,10 +1,7 @@
 
 import re
 
-list1=[]
-
-
-with open('filename.txt', 'r') as file:
+with open('testing.txt', 'r') as file:
 
     text = file.read()
     length = len(text)
@@ -47,16 +44,16 @@ with open('filename.txt', 'r') as file:
                 "le", "eq", "ne", "true", "false", "nil", "dummy", "within", "and", "rec"
             ]
             if identifier in keywords:
-                matches.append(("KEYWORD",identifier))
+                matches.append(("<KEYWORD>",identifier))
             else:
-                matches.append(("IDENTIFIER", identifier))
+                matches.append(("<IDENTIFIER>", identifier))
             current += len(identifier)
             continue
 
         matcher = integerPattern.match(text[current:])
         if matcher:
             integer = matcher.group()
-            matches.append(("INTEGER", integer))
+            matches.append(("<INTEGER>", integer))
             current += len(integer)
             continue
 
@@ -65,19 +62,19 @@ with open('filename.txt', 'r') as file:
         matcher = operatorPattern.match(text[current:])
         if matcher:
             operator = matcher.group()
-            matches.append(("OPERATOR", operator))
+            matches.append(("<OPERATOR>", operator))
             current += len(operator)
             continue
 
         matcher = stringPattern.match(text[current:])
         if matcher:
             string = matcher.group()
-            matches.append(("STRING", string))
+            matches.append(("<STRING>", string))
             current += len(string)
             continue
 
         if text[current] in "(),;":
-            matches.append(("PUNCTUATION", text[current]))
+            matches.append(("<PUNCTUATION>", text[current]))
             current += 1
             continue
 
@@ -86,8 +83,7 @@ with open('filename.txt', 'r') as file:
         break
 
 
-for i in matches:
-    print(i)
+print(matches)
 
 
 
