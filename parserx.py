@@ -132,8 +132,64 @@ def Bp():
         A()
 
 
-def A():
+def A():#check later
+    if next_token[1] == "+" :
+        read("+")
+        At()
+    elif next_token[1] == "-" :
+        read("-")
+        At()
+    else:
+        At()
+        while next_token[1] in ("+", "-"):
+            if next_token[1] == "+" :
+                read("+")
+                At()
+            if next_token[1] == "-" :
+                read("-")
+                At()
+
+def At():
+    Af()
+    while next_token[1] in ("*", "/"):
+        if next_token[1] == "*" :
+            read("*")
+            Af()
+        if next_token[1] == "/" :
+            read("/")
+            Af()
+
+
+def Af():
+    Ap()
+    if next_token[1] == "**" :
+        read("**")
+        Af()
+
+
+
+def Ap():
+    R()
+
+    while next_token[1] == "@" :
+        read("@")
+        if next_token[0] == "<IDENTIFIER>":
+            read(next_token[1])
+            R()
+        else:
+            print("Error parsing Ap")
+
+
+def R():
+    Rn()
+    
+
+def Rn():
     pass
+
+
+
+
 
 def Dr():
     pass
