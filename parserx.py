@@ -46,12 +46,7 @@ def E():
     else:
         Ew()
 
-def D():
-    pass
 
-
-def Vb():
-    pass
 
 def Ew():
     T()
@@ -212,9 +207,40 @@ def Rn():
 
 
 
+def D():
+    Da()
+    if next_token[1] == "within" :
+        read("within")
+        D()
+
+
+def Da():
+    Dr()
+    while next_token[1] == "and" :
+        read("and")
+        Dr()
 
 
 def Dr():
+    if next_token[1] == "rec":
+        read("rec")
+        Db()
+
+    else:
+        Db()
+
+def Db():
+
+
     pass
+
+
+def Vb():
+    pass
+
+
+
+
+
 # E()
 # print(next_token)
