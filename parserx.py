@@ -54,6 +54,43 @@ def Vb():
     pass
 
 def Ew():
+    T()
+    if next_token == "where":
+        read(next_token)
+        Dr()
+
+
+def T():
+    Ta()
+    while (next_token[0] == "<PUNCTUATION>" and next_token[1] == ","):
+            read(",")
+            Ta()
+    
+
+
+
+def Ta():
+    Tc()
+    while next_token == "aug":
+        read(next_token)
+        Tc()
+
+
+
+def Tc():
+    B()
+    if next_token[0]== "<OPERATOR>" and next_token[1] == "->" :
+        Tc()
+        read("|")
+        Tc()
+    
+    
+
+
+def B():
+    pass
+
+def Dr():
     pass
 # E()
 # print(next_token)
