@@ -182,10 +182,33 @@ def Ap():
 
 def R():
     Rn()
-    
+    while next_token[0] in ("<IDENTIFIER>", "<INTEGER>", "<STRING>") or next_token[1] in ('true','false','nil','(',"dummy"):
+        Rn()
+
 
 def Rn():
-    pass
+    if next_token[1] == "true":
+        read("true")
+       
+    elif next_token[1] == "false":
+        read("false")
+   
+    elif next_token[1] == "nil":
+        read("nil")
+
+    elif next_token[1] == "dummy":
+        read("dummy")
+      
+    elif next_token[0] in ("<IDENTIFIER>", "<INTEGER>", "<STRING>"):
+        read(next_token[1])
+
+    elif next_token[1] == "(":
+        read("(")
+        E()
+        read(")")
+
+    else:
+        print("Error in Rn")
 
 
 
