@@ -230,9 +230,36 @@ def Dr():
         Db()
 
 def Db():
+    if next_token[0] == "<IDENTIFIER>":
+        read(next_token[1])
+        if next_token[0] == "<IDENTIFIER>" or  next_token[1] == "(":
+            Vb()
+
+        while next_token[0] == "<IDENTIFIER>" or next_token[1] == "(":
+            Vb()
+
+        if  next_token[1] == "=":
+            read("=")
+            E()
+            
+        else:
+            print("Error in Db")
+    
+    elif next_token[1] == "(":
+        read("(")
+        D()
+        read(")")
+
+    else:
+        Vl()
+        read("=")
+        E()
 
 
+def Vl():
     pass
+
+
 
 
 def Vb():
