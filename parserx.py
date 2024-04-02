@@ -84,10 +84,55 @@ def Tc():
         read("|")
         Tc()
     
-    
+
 
 
 def B():
+    Bt()
+    if next_token[1] == "or":
+        read("or")
+        Bt()
+
+
+
+def Bt():
+    Bs()
+    if next_token[1] =="&":
+        read("&")
+        Bt()
+
+
+def Bs():
+    if next_token[1] =="not" :
+        read("not")
+    Bp()
+
+
+
+
+def Bp():
+    A()
+    if next_token[1] =="gr" or next_token[1] == ">":
+        read(next_token[1])
+        A()
+    elif next_token[1] =="ge" or next_token[1] == ">=":
+        read(next_token[1])
+        A()
+    elif next_token[1] =="ls" or next_token[1] == "<":
+        read(next_token[1])
+        A()
+    elif next_token[1] =="le" or next_token[1] == "<=":
+        read(next_token[1])
+        A()
+    elif next_token[1] =="eq":
+        read("eq")
+        A()
+    elif next_token[1] =="ne":
+        read("ne")
+        A()
+
+
+def A():
     pass
 
 def Dr():
