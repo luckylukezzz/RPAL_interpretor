@@ -1,21 +1,24 @@
+class AST:
+    def __init__(self):
+        self.tree_level = 0
+        self.tree_progress = []
 
-token_index = 0
+    def get_tree_level(self):
+        return self.tree_level
 
-token_list = [('<KEYWORD>', 'let'), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'Order'), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<KEYWORD>', 'where'), ('<KEYWORD>', 'rec'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'eq'), ('<INTEGER>', '0'), ('<OPERATOR>', '->'), ('<INTEGER>', '0'), ('<OPERATOR>', '|'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<OPERATOR>', '-'), ('<INTEGER>', '1'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '+'), ('<IDENTIFIER>', 'T'), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'in'), ('<IDENTIFIER>', 'Print'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<INTEGER>', '1'), ('<PUNCTUATION>', ','), ('<INTEGER>', '2'), ('<PUNCTUATION>', ','), ('<INTEGER>', '3'), ('<PUNCTUATION>', ','), ('<INTEGER>', '4'), ('<PUNCTUATION>', ','), ('<INTEGER>', '5'), ('<PUNCTUATION>', ')'), ('<PUNCTUATION>', ')')]
-token_list.append("END")
-next_token = token_list[token_index ]
+    def update_tree_level(self, new_level):
+        self.tree_level = new_level
+
+    def push_to_tree_progress(self,lvl, item):
+        self.tree_progress.append((lvl , item))
+
+    def print_tree_progress(self):
+        print("Tree Progress:")
+        for item in self.tree_progress:
+            print(item)
 
 
-
-def read(token):
-    global next_token
-    global token_index
-    if next_token[1] == token:
-        print(f"{token} read success")
-        token_index += 1
-        next_token = token_list[token_index]
-    else:
-        print("error")
+ast = AST()
 
 # def parse(token_list):
 #     global next_token
@@ -32,138 +35,183 @@ def read(token):
 #         print("Error !")
 
 
-def E():
+token_index = 0
+
+token_list = [('<KEYWORD>', 'let'), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'Order'), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<KEYWORD>', 'where'), ('<KEYWORD>', 'rec'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'eq'), ('<INTEGER>', '0'), ('<OPERATOR>', '->'), ('<INTEGER>', '0'), ('<OPERATOR>', '|'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<OPERATOR>', '-'), ('<INTEGER>', '1'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '+'), ('<IDENTIFIER>', 'T'), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'in'), ('<IDENTIFIER>', 'Print'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<INTEGER>', '1'), ('<PUNCTUATION>', ','), ('<INTEGER>', '2'), ('<PUNCTUATION>', ','), ('<INTEGER>', '3'), ('<PUNCTUATION>', ','), ('<INTEGER>', '4'), ('<PUNCTUATION>', ','), ('<INTEGER>', '5'), ('<PUNCTUATION>', ')'), ('<PUNCTUATION>', ')')]
+token_list.append("END")
+next_token = token_list[token_index ]
+
+
+def read(x,token):
+    global next_token
+    global token_index
+    if next_token[1] == token:
+        print(f"{token} read success")
+        if next_token[0] == "<IDENTIFIER>":
+            ast.push_to_tree_progress(x, f"<ID:{next_token[1]}>")
+        elif next_token[0] == "<INT>":
+            ast.push_to_tree_progress(x, f"<INT:{next_token[1]}>")
+        token_index += 1
+        next_token = token_list[token_index]
+        
+    else:
+        print("error")
+
+
+
+
+
+def E(x):
+
     if next_token[1]=="let":
-        read("let")
-        D()
-        read("in")
-        E()
+        ast.push_to_tree_progress(x, "let")
+        read(x,"let")
+        D(x+1)
+        read(x,"in")
+        E(x+1)
     elif next_token[1] == "fn":
-        read("fn")
-        Vb()
+        ast.push_to_tree_progress(x, "lambda")
+        read(x,"fn")
+        Vb(x+1)
         while next_token[0] == "<IDENTIFIER>" or (next_token[0] == "<PUNCTUATION>" and next_token[1] == "("):
-            Vb()
-        read(".")
-        E()
+            Vb(x+1)
+        read(x,".")
+        E(x+1)
     else:
-        Ew()
+        Ew(x+1)
 
 
 
-def Ew():
-    T()
+def Ew(x):
+    T(x+1)
     if next_token[1] == "where":
-        read("where")
-        Dr()
+        ast.push_to_tree_progress(x, "where")
+        read(x,"where")
+        Dr(x+1)
 
 
-def T():
-    Ta()
-    while (next_token[0] == "<PUNCTUATION>" and next_token[1] == ","):
-            read(",")
-            Ta()
+def T(x):
+    Ta(x+1)
+    if next_token[1] == ",":
+        ast.push_to_tree_progress(x, "tau")
+        while (next_token[0] == "<PUNCTUATION>" and next_token[1] == ","):
+            read(x,",")
+            Ta(x+1)
+
+
+
+
+def Ta(x):
+    Tc(x+1)
+    if next_token[1] == "aug":
+        ast.push_to_tree_progress(x, "aug")
+        while next_token[1] == "aug":
+            read(x,"aug")
+            Tc(x+1)
+
+
+
+def Tc(x):
     
+    B(x+1)
 
-
-
-def Ta():
-    Tc()
-    while next_token[1] == "aug":
-        read("aug")
-        Tc()
-
-
-
-def Tc():
-    
-    B()
-  
     if next_token[0]== "<OPERATOR>" and next_token[1] == "->" :
-        read("->")
-        Tc()
-        read("|")
-        Tc()
+        ast.push_to_tree_progress(x, "->")
+        read(x,"->")
+        Tc(x+1)
+        read(x,"|")
+        Tc(x+1)
     
 
 
 
-def B():
-    Bt()
+def B(x):
+    Bt(x+1)
     if next_token[1] == "or":
-        read("or")
-        Bt()
+        ast.push_to_tree_progress(x, "or")
+        read(x,"or")
+        Bt(x+1)
 
 
 
-def Bt():
-    Bs()
+def Bt(x):
+    Bs(x+1)
     if next_token[1] =="&":
-        read("&")
-        Bt()
+        ast.push_to_tree_progress(x, "&")
+        read(x,"&")
+        Bt(x+1)
 
 
-def Bs():
+def Bs(x):
     if next_token[1] =="not" :
-        read("not")
-    Bp()
+        ast.push_to_tree_progress(x, "not")
+        read(x,"not")
+    Bp(x+1)
 
 
 
 
-def Bp():
-    A()
+def Bp(x):
+    A(x+1)
     if next_token[1] =="gr" or next_token[1] == ">":
-        read(next_token[1])
-        A()
+        ast.push_to_tree_progress(x, "gr")
+        read(x,next_token[1])
+        A(x+1)
     elif next_token[1] =="ge" or next_token[1] == ">=":
-        read(next_token[1])
-        A()
+        ast.push_to_tree_progress(x, "ge")
+        read(x,next_token[1])
+        A(x+1)
     elif next_token[1] =="ls" or next_token[1] == "<":
-        read(next_token[1])
-        A()
+        ast.push_to_tree_progress(x, "ls")
+        read(x,next_token[1])
+        A(x+1)
     elif next_token[1] =="le" or next_token[1] == "<=":
-        read(next_token[1])
-        A()
+        ast.push_to_tree_progress(x, "le")
+        read(x,next_token[1])
+        A(x+1)
     elif next_token[1] =="eq":
-        read("eq")
-        A()
+        ast.push_to_tree_progress(x, "eq")
+        read(x,"eq")
+        A(x+1)
     elif next_token[1] =="ne":
-        read("ne")
-        A()
+        ast.push_to_tree_progress(x, "ne")
+        read(x,"ne")
+        A(x+1)
 
 
-def A():#check later
+def A(x):#check later
     if next_token[1] == "+" :
-        read("+")
-        At()
+        read(x,"+")
+        At(x+1)
     elif next_token[1] == "-" :
-        read("-")
-        At()
+        ast.push_to_tree_progress(x, "neg")
+        read(x,"-")
+        At(x+1)
     else:
-        At()
+        At(x+1)
         while next_token[1] in ("+", "-"):
             if next_token[1] == "+" :
-                read("+")
+                read(x,"+")
                 At()
             if next_token[1] == "-" :
-                read("-")
+                read(x,"-")
                 At()
 
 def At():
     Af()
     while next_token[1] in ("*", "/"):
         if next_token[1] == "*" :
-            read("*")
+            read(x,"*")
             Af()
         if next_token[1] == "/" :
-            read("/")
+            read(x,"/")
             Af()
 
 
 def Af():
     Ap()
     if next_token[1] == "**" :
-        read("**")
+        read(x,"**")
         Af()
 
 
@@ -172,9 +220,9 @@ def Ap():
     R()
 
     while next_token[1] == "@" :
-        read("@")
+        read(x,"@")
         if next_token[0] == "<IDENTIFIER>":
-            read(next_token[1])
+            read(x,next_token[1])
             R()
         else:
             print("Error parsing Ap")
@@ -188,47 +236,47 @@ def R():
 
 def Rn():
     if next_token[1] == "true":
-        read("true")
-       
+        read(x,"true")
+    
     elif next_token[1] == "false":
-        read("false")
-   
+        read(x,"false")
+
     elif next_token[1] == "nil":
-        read("nil")
+        read(x,"nil")
 
     elif next_token[1] == "dummy":
-        read("dummy")
-      
+        read(x,"dummy")
+    
     elif next_token[0] in ("<IDENTIFIER>", "<INTEGER>", "<STRING>"):
-        read(next_token[1])
+        read(x,next_token[1])
 
     elif next_token[1] == "(":
-        read("(")
+        read(x,"(")
         E()
-        read(")")
+        read(x,")")
     else:
         pass
-   
+
 
 
 
 def D():
     Da()
     if next_token[1] == "within" :
-        read("within")
+        read(x,"within")
         D()
 
 
 def Da():
     Dr()
     while next_token[1] == "and" :
-        read("and")
+        read(x,"and")
         Dr()
 
 
 def Dr():
     if next_token[1] == "rec":
-        read("rec")
+        read(x,"rec")
         Db()
 
     else:
@@ -236,7 +284,8 @@ def Dr():
 
 def Db():
     if next_token[0] == "<IDENTIFIER>":
-        read(next_token[1])
+        
+        read(x,next_token[1])
         if next_token[0] == "<IDENTIFIER>" or  next_token[1] == "(":
             Vb()
 
@@ -244,36 +293,36 @@ def Db():
             Vb()
 
         if  next_token[1] == "=":
-            read("=")
+            read(x,"=")
             E()
             
         else:
             print("Error in Db")
     
     elif next_token[1] == "(":
-        read("(")
+        read(x,"(")
         D()
-        read(")")
+        read(x,")")
 
     else:
         Vl()
-        read("=")
+        read(x,"=")
         E()
 
 
 def Vb():
     if next_token[0] == "<IDENTIFIER>":
-        read(next_token[1])
+        read(x,next_token[1])
 
     elif next_token[1] == "(":
-        read("(")
+        read(x,"(")
 
         if next_token[0] == "<IDENTIFIER>" :
             Vl()
-            read(")")
+            read(x,")")
         elif next_token[0] == ")":
-                read(")")
-           
+                read(x,")")
+        
     else:
         print("error in Vb")
 
@@ -282,10 +331,10 @@ def Vb():
 def Vl():
     count =0
     while next_token[0] == "<IDENTIFIER>":
-        read(next_token[1])
+        read(x,next_token[1])
         count = count +1
         if next_token[1] == ",":
-            read(",")
+            read(x,",")
         
         elif next_token[0] == "<IDENTIFIER>" :
             print("error in Vl")
@@ -298,3 +347,4 @@ def Vl():
 
 E()
 print(next_token)
+ast.print_tree_progress()
