@@ -1,13 +1,7 @@
 class AST:
     def __init__(self):
-        self.tree_level = 0
+
         self.tree_progress = []
-
-    def get_tree_level(self):
-        return self.tree_level
-
-    def update_tree_level(self, new_level):
-        self.tree_level = new_level
 
     def push_to_tree_progress(self,lvl, item):
         self.tree_progress.append((lvl , item))
@@ -19,7 +13,7 @@ class AST:
 
 
 ast = AST()
-
+        
 # def parse(token_list):
 #     global next_token
 #     global token_index
@@ -189,44 +183,54 @@ def A(x):#check later
         At(x+1)
     else:
         At(x+1)
+        n=x+1
         while next_token[1] in ("+", "-"):
             if next_token[1] == "+" :
-                read(x,"+")
-                At()
-            if next_token[1] == "-" :
-                read(x,"-")
-                At()
+                ast.push_to_tree_progress(n-1, "+")
+                read(n,"+")
+                At(n)
+            elif next_token[1] == "-" :
+                ast.push_to_tree_progress(n-1, "-")
+                read(n,"-")
+                At(n)
+            n=n+1
 
-def At():
-    Af()
+
+def At(x):
+    Af(x+1)
+    n=x+1
     while next_token[1] in ("*", "/"):
         if next_token[1] == "*" :
-            read(x,"*")
-            Af()
+            ast.push_to_tree_progress(n-1, "*")
+            read(n,"*")
+            Af(n)
         if next_token[1] == "/" :
-            read(x,"/")
-            Af()
+            ast.push_to_tree_progress(n-1, "/")
+            read(n,"/")
+            Af(n)
+        n=n+1
 
-
-def Af():
-    Ap()
+def Af(x):
+    Ap(x+1)
     if next_token[1] == "**" :
+        ast.push_to_tree_progress(x, "/")
         read(x,"**")
-        Af()
+        Af(x+1)
 
 
 
-def Ap():
-    R()
-
+def Ap(x):
+    R(x+1)
+    n=x+1
     while next_token[1] == "@" :
-        read(x,"@")
+        ast.push_to_tree_progress(n-1, "@")
+        read(n-1,"@")
         if next_token[0] == "<IDENTIFIER>":
-            read(x,next_token[1])
-            R()
+            read(n-1,next_token[1])
+            R(n)
         else:
             print("Error parsing Ap")
-
+        n=n+1
 
 def R():
     Rn()
@@ -234,7 +238,7 @@ def R():
         Rn()
 
 
-def Rn():
+def Rn(x):
     if next_token[1] == "true":
         read(x,"true")
     
