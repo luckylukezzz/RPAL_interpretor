@@ -2,8 +2,10 @@
 token_index = 0
 
 token_list = [('<KEYWORD>', 'let'), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'Order'), ('<IDENTIFIER>', 'A'), ('<PUNCTUATION>', ')'), ('<KEYWORD>', 'where'), ('<KEYWORD>', 'rec'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '='), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'eq'), ('<INTEGER>', '0'), ('<OPERATOR>', '->'), ('<INTEGER>', '0'), ('<OPERATOR>', '|'), ('<IDENTIFIER>', 'Psum'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'T'), ('<PUNCTUATION>', ','), ('<IDENTIFIER>', 'N'), ('<OPERATOR>', '-'), ('<INTEGER>', '1'), ('<PUNCTUATION>', ')'), ('<OPERATOR>', '+'), ('<IDENTIFIER>', 'T'), ('<IDENTIFIER>', 'N'), ('<KEYWORD>', 'in'), ('<IDENTIFIER>', 'Print'), ('<PUNCTUATION>', '('), ('<IDENTIFIER>', 'Sum'), ('<PUNCTUATION>', '('), ('<INTEGER>', '1'), ('<PUNCTUATION>', ','), ('<INTEGER>', '2'), ('<PUNCTUATION>', ','), ('<INTEGER>', '3'), ('<PUNCTUATION>', ','), ('<INTEGER>', '4'), ('<PUNCTUATION>', ','), ('<INTEGER>', '5'), ('<PUNCTUATION>', ')'), ('<PUNCTUATION>', ')')]
-
+token_list.append("END")
 next_token = token_list[token_index ]
+
+
 
 def read(token):
     global next_token
@@ -15,19 +17,19 @@ def read(token):
     else:
         print("error")
 
-def parse(token_list):
-    global next_token
-    global token_index
-    token_list.append("$")
-    token_index = 0
-    next_token = token_list[token_index]
-    print(next_token)
-    E()
+# def parse(token_list):
+#     global next_token
+#     global token_index
+#     token_list.append("$")
+#     token_index = 0
+#     next_token = token_list[token_index]
+#     print(next_token)
+#     E()
 
-    if next_token == "$":
-        print("Parsing successful")
-    else:
-        print("Error !")
+#     if next_token == "$":
+#         print("Parsing successful")
+#     else:
+#         print("Error !")
 
 
 def E():
@@ -50,8 +52,8 @@ def E():
 
 def Ew():
     T()
-    if next_token == "where":
-        read(next_token)
+    if next_token[1] == "where":
+        read("where")
         Dr()
 
 
@@ -66,15 +68,18 @@ def T():
 
 def Ta():
     Tc()
-    while next_token == "aug":
-        read(next_token)
+    while next_token[1] == "aug":
+        read("aug")
         Tc()
 
 
 
 def Tc():
+    
     B()
+  
     if next_token[0]== "<OPERATOR>" and next_token[1] == "->" :
+        read("->")
         Tc()
         read("|")
         Tc()
@@ -201,9 +206,9 @@ def Rn():
         read("(")
         E()
         read(")")
-
     else:
-        print("Error in Rn")
+        pass
+   
 
 
 
@@ -256,18 +261,40 @@ def Db():
         E()
 
 
-def Vl():
-    pass
-
-
-
-
 def Vb():
-    pass
+    if next_token[0] == "<IDENTIFIER>":
+        read(next_token[1])
+
+    elif next_token[1] == "(":
+        read("(")
+
+        if next_token[0] == "<IDENTIFIER>" :
+            Vl()
+            read(")")
+        elif next_token[0] == ")":
+                read(")")
+           
+    else:
+        print("error in Vb")
 
 
 
+def Vl():
+    count =0
+    while next_token[0] == "<IDENTIFIER>":
+        read(next_token[1])
+        count = count +1
+        if next_token[1] == ",":
+            read(",")
+        
+        elif next_token[0] == "<IDENTIFIER>" :
+            print("error in Vl")
 
 
-# E()
-# print(next_token)
+    if count == 0 :
+        print("error in Vl")
+
+
+
+E()
+print(next_token)
