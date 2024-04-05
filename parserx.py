@@ -9,7 +9,7 @@ class AST:
     def print_tree_progress(self):
         print("Tree Progress:")
         for item in self.tree_progress:
-            print(item)
+            print("."*item[0] , item[1])
 
 
 ast = AST()
@@ -43,8 +43,10 @@ def read(x,token):
         print(f"{token} read success")
         if next_token[0] == "<IDENTIFIER>":
             ast.push_to_tree_progress(x, f"<ID:{next_token[1]}>")
-        elif next_token[0] == "<INT>":
+        elif next_token[0] == "<INTEGER>":
             ast.push_to_tree_progress(x, f"<INT:{next_token[1]}>")
+        elif next_token[0] == "<STRING>":
+            ast.push_to_tree_progress(x, f"<STR:{next_token[1]}>")
         token_index += 1
         next_token = token_list[token_index]
         
@@ -232,23 +234,30 @@ def Ap(x):
             print("Error parsing Ap")
         n=n+1
 
-def R():
-    Rn()
+def R(x):
+    Rn(x+1)
+    n=x+1
     while next_token[0] in ("<IDENTIFIER>", "<INTEGER>", "<STRING>") or next_token[1] in ('true','false','nil','(',"dummy"):
-        Rn()
+        ast.push_to_tree_progress(n-1, "gamma")
+        Rn(n)
+        n=n+1
 
 
 def Rn(x):
     if next_token[1] == "true":
+        ast.push_to_tree_progress(x, "true")
         read(x,"true")
     
     elif next_token[1] == "false":
+        ast.push_to_tree_progress(x, "false")
         read(x,"false")
 
     elif next_token[1] == "nil":
+        ast.push_to_tree_progress(x, "nil")
         read(x,"nil")
 
     elif next_token[1] == "dummy":
+        ast.push_to_tree_progress(x, "dummy")
         read(x,"dummy")
     
     elif next_token[0] in ("<IDENTIFIER>", "<INTEGER>", "<STRING>"):
@@ -256,7 +265,7 @@ def Rn(x):
 
     elif next_token[1] == "(":
         read(x,"(")
-        E()
+        E(x+1)
         read(x,")")
     else:
         pass
@@ -264,57 +273,63 @@ def Rn(x):
 
 
 
-def D():
-    Da()
+def D(x):
+    Da(x+1)
     if next_token[1] == "within" :
+        ast.push_to_tree_progress(x, "within")
         read(x,"within")
-        D()
+        D(x+1)
 
 
-def Da():
-    Dr()
-    while next_token[1] == "and" :
-        read(x,"and")
-        Dr()
+def Da(x):
+    Dr(x+1)
+
+    if next_token[1] == "and" :
+        ast.push_to_tree_progress(x, "and")
+        while next_token[1] == "and" :
+            read(x,"and")
+            Dr(x+1)
 
 
-def Dr():
+def Dr(x):
     if next_token[1] == "rec":
+        ast.push_to_tree_progress(x, "rec")
         read(x,"rec")
-        Db()
+        Db(x+1)
 
     else:
-        Db()
+        Db(x+1)
 
-def Db():
+def Db(x):
     if next_token[0] == "<IDENTIFIER>":
-        
+        ast.push_to_tree_progress(x, "fcn_form")
         read(x,next_token[1])
         if next_token[0] == "<IDENTIFIER>" or  next_token[1] == "(":
-            Vb()
+            Vb(x+1)
 
         while next_token[0] == "<IDENTIFIER>" or next_token[1] == "(":
-            Vb()
+            Vb(x+1)
 
         if  next_token[1] == "=":
             read(x,"=")
-            E()
+            E(x+1)
             
         else:
             print("Error in Db")
     
     elif next_token[1] == "(":
         read(x,"(")
-        D()
+        D(x+1)
         read(x,")")
 
     else:
-        Vl()
+        ast.push_to_tree_progress(x, "=")
+        Vl(x+1)
         read(x,"=")
-        E()
+        E(x+1)
 
 
-def Vb():
+def Vb(x):
     if next_token[0] == "<IDENTIFIER>":
         read(x,next_token[1])
 
@@ -322,9 +337,10 @@ def Vb():
         read(x,"(")
 
         if next_token[0] == "<IDENTIFIER>" :
-            Vl()
+            Vl(x+1)
             read(x,")")
         elif next_token[0] == ")":
+                ast.push_to_tree_progress(x, "()")
                 read(x,")")
         
     else:
@@ -332,16 +348,18 @@ def Vb():
 
 
 
-def Vl():
+def Vl(x):
     count =0
-    while next_token[0] == "<IDENTIFIER>":
-        read(x,next_token[1])
-        count = count +1
-        if next_token[1] == ",":
-            read(x,",")
-        
-        elif next_token[0] == "<IDENTIFIER>" :
-            print("error in Vl")
+    if next_token[0] == "<IDENTIFIER>":
+        ast.push_to_tree_progress(x, ",")
+        while next_token[0] == "<IDENTIFIER>":
+            read(x,next_token[1])
+            count = count +1
+            if next_token[1] == ",":
+                read(x,",")
+            
+            elif next_token[0] == "<IDENTIFIER>" :
+                print("error in Vl")
 
 
     if count == 0 :
@@ -349,6 +367,6 @@ def Vl():
 
 
 
-E()
+E(0)
 print(next_token)
 ast.print_tree_progress()
