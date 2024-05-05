@@ -38,6 +38,12 @@ def print_ast(root, depth=0):
     for child in root.children:
         print_ast(child, depth + 1)
 
+def print_ast_to_file(root, depth=0, filename="astout.txt"):
+    with open(filename, "a") as file:
+        file.write("." * depth + root.token + "\n")
+
+        for child in root.children:
+            print_ast_to_file(child, depth + 1, filename)
 
 def read(token):
     global next_token
@@ -303,7 +309,7 @@ def Vl():
     n=1
     while(next_token[1]==','):
         read(',')
-        build_tree(next_token[1], 0)
+        build_tree(f"{dict[next_token[0]]}{next_token[1]}>", 0)
         read(next_token[1])
         n+=1
     if n>1:
@@ -312,6 +318,4 @@ def Vl():
 
 E()
 # print(next_token)
-
-
 print_ast(ast[0])
