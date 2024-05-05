@@ -264,7 +264,7 @@ def Db(): #check
         D()
         read(')')
     else:
-        build_tree(next_token[1],0)
+        build_tree(f"{dict[next_token[0]]}{next_token[1]}>",0)
         read(next_token[1])
         if (next_token[0] == '<IDENTIFIER>' or next_token[1]=='('):
             Vb()
@@ -286,7 +286,7 @@ def Db(): #check
 
 def Vb():
     if(next_token[0]=='<IDENTIFIER>'):
-        build_tree(next_token[1],0)
+        build_tree(f"{dict[next_token[0]]}{next_token[1]}>",0)
         read(next_token[1])
     elif next_token[1]=='(':
         read('(')
@@ -298,7 +298,7 @@ def Vb():
             read(')')
 
 def Vl():
-    build_tree(next_token[1],0)
+    build_tree(f"{dict[next_token[0]]}{next_token[1]}>",0)
     read(next_token[1])
     n=1
     while(next_token[1]==','):
