@@ -289,14 +289,8 @@ def applyRules():
 
 tokens = None
 
-def runProgram(fileName):
-    global tokens
-    tokens = ASTBuilder.readFile(fileName)
-    print(tokens)
-
 if __name__ == "__main__":
-    # fileName = 'input.txt'
-    # runProgram(fileName)
+
     tokens = parser_1.getAst()
 
 AST  = ASTBuilder.buildAST(tokens)
@@ -311,7 +305,7 @@ for i in traversedST.strip("\n").split("\n"):
 controlStructures = []
 count = 0
 
-generateControlStructure(ST,0) ############################
+generateControlStructure(ST,0) 
 
 builtInFunctions = ["Order", "Print", "print", "Conc", "Stern", "Stem", "Isinteger", "Istruthvalue", "Isstring", "Istuple", "Isfunction"]
 
@@ -327,7 +321,7 @@ stack.append(environments[0].name)
 
 applyRules()
 
-print("Output of the above program is:")
+print("Output :")
 print(stack[0])
 
 
