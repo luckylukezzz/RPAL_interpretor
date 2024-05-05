@@ -2,6 +2,7 @@ import ASTBuilder
 import STBuilder
 import nAryTree
 import sys
+import parser_1
 
 def generateControlStructure(root, i):
     global controlStructures
@@ -294,8 +295,9 @@ def runProgram(fileName):
     print(tokens)
 
 if __name__ == "__main__":
-    fileName = 'input.txt'
-    runProgram(fileName)
+    # fileName = 'input.txt'
+    # runProgram(fileName)
+    tokens = parser_1.getAst()
 
 AST  = ASTBuilder.buildAST(tokens)
 ST = STBuilder.standardize(AST)

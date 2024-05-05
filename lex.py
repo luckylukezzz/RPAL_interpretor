@@ -82,8 +82,8 @@ with open('testing.txt', 'r') as file:
         print("Error in tokenizing")
         break
 
-
-print(matches)
+def lexMatches():
+    return matches
 
 
 
